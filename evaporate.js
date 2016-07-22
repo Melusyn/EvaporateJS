@@ -28,8 +28,6 @@
             'maxConcurrentParts',
             'logging',
             'cloudfront',
-            'aws_url',
-            'bucket',
             'encodeFilename',
             'computeContentMd5',
             'allowS3ExistenceOptimization',
@@ -37,7 +35,6 @@
             'timeUrl',
             'cryptoMd5Method',
             'cryptoHexEncodedHash256',
-            'aws_key',
             'awsRegion',
             'awsSignatureVersion'
         ];
@@ -1145,7 +1142,7 @@
                     var xhr = assignCurrentXhr(requester);
 
                     var payload = requester.getPayload();
-                    var url = AWS_URL + requester.path;
+                    var url = (con.aws_url || AWS_URL) + requester.path;
                     if (requester.query_string) {
                         url += requester.query_string;
                     }
@@ -1233,7 +1230,7 @@
                     url = [con.signerUrl, '?to_sign=', stringToSignMethod(authRequester), '&datetime=', authRequester.dateString].join(''),
                     warnMsg;
 
-                xhr.withCredentials = true
+                xhr.withCredentials = true;
 
                 var signParams = makeSignParamsObject(me.signParams);
                 for (var param in signParams) {
@@ -1362,7 +1359,7 @@
                     (request.contentType || '') + '\n' +
                     '\n' +
                     x_amz_headers +
-                    (con.cloudfront ? '/' + con.bucket : '') +
+                    ((con.cloudfront || con.notUsa) ? '/' + con.bucket : '') +
                     request.path;
 
                 l.d('makeStringToSign (V2)', result);
@@ -1519,7 +1516,7 @@
 
             function getPath() {
                 var path = '/' + con.bucket + '/' + me.name;
-                if (con.cloudfront || AWS_URL.indexOf('cloudfront') > -1) {
+                if (con.notUsa || con.cloudfront || AWS_URL.indexOf('cloudfront') > -1) {
                     path = '/' + me.name;
                 }
                 return path;
