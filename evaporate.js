@@ -969,8 +969,8 @@
 
                 // check that the part sizes and bucket match, and if the file name of the upload
                 // matches if onlyRetryForSameFileName is true
-                return con.partSize === u.partSize 
-                    && completedAt > HOURS_AGO 
+                return con.partSize === u.partSize
+                    && completedAt > HOURS_AGO
                     && con.bucket === u.bucket
                     && (con.onlyRetryForSameFileName ? me.name === u.awsKey : true);
             }
@@ -1232,6 +1232,8 @@
                 var xhr = assignCurrentXhr(authRequester),
                     url = [con.signerUrl, '?to_sign=', stringToSignMethod(authRequester), '&datetime=', authRequester.dateString].join(''),
                     warnMsg;
+
+                xhr.withCredentials = true
 
                 var signParams = makeSignParamsObject(me.signParams);
                 for (var param in signParams) {
